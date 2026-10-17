@@ -14,3 +14,17 @@ check command exits zero AND the expected evidence is present.
 | 7 | gh repo create attempted AT MOST once; on 429 throttle → PUSH-PENDING | shell log of the single attempt | public URL or PUSH-PENDING, no retry loops |
 
 Gate results recorded below on completion.
+
+## Results (2026-10-17, run by builder)
+
+| # | Result |
+|---|--------|
+| 1 | PASS — `python3 -m unittest discover -s tests` → 13 tests, OK, exit 0 |
+| 2 | PASS — all 5 required cases present and green: attestation round-trip, tampered rejection, handshake refusal (incompatible perms), session replay rejection (+ out-of-order), audit integrity (tamper detection + hash chaining) |
+| 3 | PASS — `diff` of README fenced demo block vs fresh `python3 demo.py` run: byte-identical (demo seeded for determinism) |
+| 4 | PASS — `test -s LICENSE` exit 0 (MIT, Ingenious AI 2026) |
+| 5 | PASS — CI YAML parses (PyYAML); runs `python -m unittest discover -s tests -v`, the repo's real test command |
+| 6 | PASS — no secrets in tree; only clearly-labeled demo/test keys (`DEMO ONLY`, `test-shared-key`) |
+| 7 | PASS — single `gh repo create` succeeded first try → https://github.com/Iceman2050/agent-trust-protocol (public, pushed, 5 topics set). No retry loop needed. |
+
+Bugs found and fixed during the build: (1) handshake granted each party's requests against the wrong party's attested permissions — rewrote the intersection logic; (2) stateless `Session.receive` couldn't detect exact replays — made it an instance method tracking the next expected inbound seq.
